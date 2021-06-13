@@ -53,7 +53,7 @@ extension SocketEngineWebsocket {
     /// - parameter withType: The type of message to send.
     /// - parameter withData: The data associated with this message.
     public func sendWebSocketMessage(_ str: String, withType type: SocketEnginePacketType, withData datas: [Data]) {
-        DefaultSocketLogger.Logger.log("Sending ws: %@ as type: %@", type: "SocketEngine", args: str, type.rawValue)
+        DefaultSocketLogger.Logger.log("Sending ws: %@ as type: %@", type: "[Legacy]SocketEngine", args: str, type.rawValue)
 
         ws?.write(string: "\(type.rawValue)\(str)")
 

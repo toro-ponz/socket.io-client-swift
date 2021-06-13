@@ -76,7 +76,7 @@ open class SocketIOClient : NSObject, SocketIOClientSpec, SocketEngineClient, So
         return engine?.sid
     }
 
-    private let logType = "SocketIOClient"
+    private let logType = "[Legacy]SocketIOClient"
 
     private var anyHandler: ((SocketAnyEvent) -> Void)?
     private var currentReconnectAttempt = 0
@@ -380,7 +380,7 @@ open class SocketIOClient : NSObject, SocketIOClientSpec, SocketEngineClient, So
     ///
     /// - parameter reason: The reason the engine opened.
     open func engineDidOpen(reason: String) {
-        DefaultSocketLogger.Logger.log(reason, type: "SocketEngineClient")
+        DefaultSocketLogger.Logger.log(reason, type: logType)
     }
 
     // Called when the socket gets an ack for something it sent
@@ -530,7 +530,7 @@ open class SocketIOClient : NSObject, SocketIOClientSpec, SocketEngineClient, So
     ///
     /// - parameter msg: The message that needs parsing.
     public func parseEngineMessage(_ msg: String) {
-        DefaultSocketLogger.Logger.log("Should parse message: %@", type: "SocketIOClient", args: msg)
+        DefaultSocketLogger.Logger.log("Should parse message: %@", type: logType, args: msg)
 
         handleQueue.async { self.parseSocketMessage(msg) }
     }

@@ -156,7 +156,7 @@ open class WebSocket : NSObject, StreamDelegate {
         return canWork
     }
     /// The shared processing queue used for all WebSocket.
-    private static let sharedWorkQueue = DispatchQueue(label: "com.vluxe.starscream.websocket", attributes: [])
+    private static let sharedWorkQueue = DispatchQueue(label: "com.vluxe.starscream.websocket.legacy", attributes: [])
     
     /// Used for setting protocols.
     public init(url: URL, protocols: [String]? = nil) {

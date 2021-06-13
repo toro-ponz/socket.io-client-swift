@@ -24,7 +24,7 @@
 
 import Dispatch
 
-protocol SocketIOClientSpec : class {
+protocol SocketIOClientSpec : AnyObject {
     var handleQueue: DispatchQueue { get set }
     var nsp: String { get set }
     var waitingPackets: [SocketPacket] { get set }
@@ -40,7 +40,7 @@ protocol SocketIOClientSpec : class {
 
 extension SocketIOClientSpec {
     func didError(reason: String) {
-        DefaultSocketLogger.Logger.error("%@", type: "SocketIOClient", args: reason)
+        DefaultSocketLogger.Logger.error("%@", type: "[Legacy]SocketIOClient", args: reason)
 
         handleClientEvent(.error, data: [reason])
     }

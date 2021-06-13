@@ -31,7 +31,7 @@ public final class SocketEngine : NSObject, URLSessionDelegate, SocketEnginePoll
     // MARK: Properties
 
     /// The queue that all engine actions take place on.
-    public let engineQueue = DispatchQueue(label: "com.socketio.engineHandleQueue")
+    public let engineQueue = DispatchQueue(label: "com.socketio.engineHandleQueue.legacy")
 
     /// The connect parameters sent during a connect.
     public var connectParams: [String: Any]? {
@@ -119,7 +119,7 @@ public final class SocketEngine : NSObject, URLSessionDelegate, SocketEnginePoll
 
     private weak var sessionDelegate: URLSessionDelegate?
 
-    private let logType = "SocketEngine"
+    private let logType = "[Legacy]SocketEngine"
     private let url: URL
 
     private var pingInterval: Double?
@@ -506,7 +506,7 @@ public final class SocketEngine : NSObject, URLSessionDelegate, SocketEnginePoll
     ///
     /// - parameter data: The data to parse.
     public func parseEngineData(_ data: Data) {
-        DefaultSocketLogger.Logger.log("Got binary data: %@", type: "SocketEngine", args: data)
+        DefaultSocketLogger.Logger.log("Got binary data: %@", type: logType, args: data)
 
         client?.parseEngineBinaryData(data.subdata(in: 1..<data.endIndex))
     }
@@ -668,7 +668,7 @@ extension SocketEngine {
 
     /// Delegate called when the session becomes invalid.
     public func URLSession(session: URLSession, didBecomeInvalidWithError error: NSError?) {
-        DefaultSocketLogger.Logger.error("Engine URLSession became invalid", type: "SocketEngine")
+        DefaultSocketLogger.Logger.error("Engine URLSession became invalid", type: logType)
 
         didError(reason: "Engine URLSession became invalid")
     }
