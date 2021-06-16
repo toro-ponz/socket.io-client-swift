@@ -10,13 +10,13 @@ import XCTest
 @testable import SocketIO
 
 class SocketEngineTest: XCTestCase {
-    var client: SocketIOClient!
-    var engine: SocketEngine!
+    var client: SocketIOClientLegacy!
+    var engine: SocketEngineLegacy!
 
     override func setUp() {
         super.setUp()
-        client = SocketIOClient(socketURL: URL(string: "http://localhost")!)
-        engine = SocketEngine(client: client, url: URL(string: "http://localhost")!, options: nil)
+        client = SocketIOClientLegacy(socketURL: URL(string: "http://localhost")!)
+        engine = SocketEngineLegacy(client: client, url: URL(string: "http://localhost")!, options: nil)
         
         client.setTestable()
     }

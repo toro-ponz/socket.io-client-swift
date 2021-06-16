@@ -23,24 +23,24 @@
 //  THE SOFTWARE.
 
 /// An array-like type that holds `SocketIOClientOption`s
-public struct SocketIOClientConfiguration : ExpressibleByArrayLiteral, Collection, MutableCollection {
+public struct SocketIOClientConfigurationLegacy : ExpressibleByArrayLiteral, Collection, MutableCollection {
     // MARK: Typealiases
 
     /// Type of element stored.
-    public typealias Element = SocketIOClientOption
+    public typealias Element = SocketIOClientOptionLegacy
 
     /// Index type.
-    public typealias Index = Array<SocketIOClientOption>.Index
+    public typealias Index = Array<SocketIOClientOptionLegacy>.Index
 
     /// Iterator type.
-    public typealias Iterator = Array<SocketIOClientOption>.Iterator
+    public typealias Iterator = Array<SocketIOClientOptionLegacy>.Iterator
 
     /// SubSequence type.
-    public typealias SubSequence =  Array<SocketIOClientOption>.SubSequence
+    public typealias SubSequence =  Array<SocketIOClientOptionLegacy>.SubSequence
 
     // MARK: Properties
 
-    private var backingArray = [SocketIOClientOption]()
+    private var backingArray = [SocketIOClientOptionLegacy]()
 
     /// The start index of this collection.
     public var startIndex: Index {

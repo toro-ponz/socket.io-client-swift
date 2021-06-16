@@ -40,41 +40,41 @@ import Foundation
 ///
 /// socket.emit("myEvent", CustomData(name: "Erik", age: 24))
 /// ```
-public protocol SocketData {
+public protocol SocketDataLegacy {
     // MARK: Methods
 
     /// A representation of self that can sent over socket.io.
-    func socketRepresentation() throws -> SocketData
+    func socketRepresentation() throws -> SocketDataLegacy
 }
 
-public extension SocketData {
+public extension SocketDataLegacy {
     /// Default implementation. Only works for native Swift types and a few Foundation types.
-    func socketRepresentation() -> SocketData {
+    func socketRepresentation() -> SocketDataLegacy {
         return self
     }
 }
 
-extension Array : SocketData { }
-extension Bool : SocketData { }
-extension Dictionary : SocketData { }
-extension Double : SocketData { }
-extension Int : SocketData { }
-extension NSArray : SocketData { }
-extension Data : SocketData { }
-extension NSData : SocketData { }
-extension NSDictionary : SocketData { }
-extension NSString : SocketData { }
-extension NSNull : SocketData { }
-extension String : SocketData { }
+extension Array : SocketDataLegacy { }
+extension Bool : SocketDataLegacy { }
+extension Dictionary : SocketDataLegacy { }
+extension Double : SocketDataLegacy { }
+extension Int : SocketDataLegacy { }
+extension NSArray : SocketDataLegacy { }
+extension Data : SocketDataLegacy { }
+extension NSData : SocketDataLegacy { }
+extension NSDictionary : SocketDataLegacy { }
+extension NSString : SocketDataLegacy { }
+extension NSNull : SocketDataLegacy { }
+extension String : SocketDataLegacy { }
 
 /// A typealias for an ack callback.
-public typealias AckCallback = ([Any]) -> Void
+public typealias AckCallbackLegacy = ([Any]) -> Void
 
 /// A typealias for a normal callback.
-public typealias NormalCallback = ([Any], SocketAckEmitter) -> Void
+public typealias NormalCallbackLegacy = ([Any], SocketAckEmitterLegacy) -> Void
 
 typealias JSON = [String: Any]
-typealias Probe = (msg: String, type: SocketEnginePacketType, data: [Data])
+typealias Probe = (msg: String, type: SocketEnginePacketTypeLegacy, data: [Data])
 typealias ProbeWaitQueue = [Probe]
 
 enum Either<E, V> {
