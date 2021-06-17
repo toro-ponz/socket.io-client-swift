@@ -323,8 +323,13 @@ public final class SocketEngine : NSObject, URLSessionDelegate, SocketEnginePoll
         ws?.delegate = nil
         ws = WebSocket(url: urlWebSocketWithSid as URL)
 
-        if cookies != nil {
-            let headers = HTTPCookie.requestHeaderFields(with: cookies!)
+        var cookiesToAdd: [HTTPCookie] = cookies ?? []
+        if let additionalCookies = session?.configuration.httpCookieStorage?.cookies(for: url) {
+            cookiesToAdd.append(contentsOf: additionalCookies)
+        }
+
+        if !cookiesToAdd.isEmpty {
+            let headers = HTTPCookie.requestHeaderFields(with: cookiesToAdd)
             for (key, value) in headers {
                 ws?.headers[key] = value
             }
