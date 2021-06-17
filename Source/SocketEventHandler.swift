@@ -24,12 +24,12 @@
 
 import Foundation
 
-struct SocketEventHandler {
+struct SocketEventHandlerLegacy {
     let event: String
     let id: UUID
-    let callback: NormalCallback
+    let callback: NormalCallbackLegacy
     
-    func executeCallback(with items: [Any], withAck ack: Int, withSocket socket: SocketIOClient) {
-        callback(items, SocketAckEmitter(socket: socket, ackNum: ack))
+    func executeCallback(with items: [Any], withAck ack: Int, withSocket socket: SocketIOClientLegacy) {
+        callback(items, SocketAckEmitterLegacy(socket: socket, ackNum: ack))
     }
 }

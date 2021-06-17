@@ -27,11 +27,11 @@ import Foundation
 
 /// The class that handles the engine.io protocol and transports.
 /// See `SocketEnginePollable` and `SocketEngineWebsocket` for transport specific methods.
-public final class SocketEngine : NSObject, URLSessionDelegate, SocketEnginePollable, SocketEngineWebsocket {
+public final class SocketEngineLegacy : NSObject, URLSessionDelegate, SocketEnginePollableLegacy, SocketEngineWebsocketLegacy {
     // MARK: Properties
 
     /// The queue that all engine actions take place on.
-    public let engineQueue = DispatchQueue(label: "com.socketio.engineHandleQueue")
+    public let engineQueue = DispatchQueue(label: "com.socketio.engineHandleQueue.legacy")
 
     /// The connect parameters sent during a connect.
     public var connectParams: [String: Any]? {
@@ -112,14 +112,14 @@ public final class SocketEngine : NSObject, URLSessionDelegate, SocketEnginePoll
     public private(set) var websocket = false
 
     /// The WebSocket for this engine.
-    public private(set) var ws: WebSocket?
+    public private(set) var ws: WebSocketLegacy?
 
     /// The client for this engine.
-    public weak var client: SocketEngineClient?
+    public weak var client: SocketEngineClientLegacy?
 
     private weak var sessionDelegate: URLSessionDelegate?
 
-    private let logType = "SocketEngine"
+    private let logType = "[Legacy]SocketEngine"
     private let url: URL
 
     private var pingInterval: Double?
@@ -144,7 +144,7 @@ public final class SocketEngine : NSObject, URLSessionDelegate, SocketEnginePoll
     /// - parameter client: The client for this engine.
     /// - parameter url: The url for this engine.
     /// - parameter config: An array of configuration options for this engine.
-    public init(client: SocketEngineClient, url: URL, config: SocketIOClientConfiguration) {
+    public init(client: SocketEngineClientLegacy, url: URL, config: SocketIOClientConfigurationLegacy) {
         self.client = client
         self.url = url
         for option in config {
@@ -194,7 +194,7 @@ public final class SocketEngine : NSObject, URLSessionDelegate, SocketEnginePoll
     /// - parameter client: The client for this engine.
     /// - parameter url: The url for this engine.
     /// - parameter options: The options for this engine.
-    public convenience init(client: SocketEngineClient, url: URL, options: NSDictionary?) {
+    public convenience init(client: SocketEngineClientLegacy, url: URL, options: NSDictionary?) {
         self.init(client: client, url: url, config: options?.toSocketConfiguration() ?? [])
     }
 
@@ -321,7 +321,7 @@ public final class SocketEngine : NSObject, URLSessionDelegate, SocketEnginePoll
 
     private func createWebsocketAndConnect() {
         ws?.delegate = nil
-        ws = WebSocket(url: urlWebSocketWithSid as URL)
+        ws = WebSocketLegacy(url: urlWebSocketWithSid as URL)
 
         var cookiesToAdd: [HTTPCookie] = cookies ?? []
         if let additionalCookies = session?.configuration.httpCookieStorage?.cookies(for: url) {
@@ -386,7 +386,7 @@ public final class SocketEngine : NSObject, URLSessionDelegate, SocketEnginePoll
     // We need to take special care when we're polling that we send it ASAP
     // Also make sure we're on the emitQueue since we're touching postWait
     private func disconnectPolling(reason: String) {
-        postWait.append(String(SocketEnginePacketType.close.rawValue))
+        postWait.append(String(SocketEnginePacketTypeLegacy.close.rawValue))
 
         doRequest(for: createRequestForPostWithPostWait()) {_, _, _ in }
         closeOutEngine(reason: reason)
@@ -506,7 +506,7 @@ public final class SocketEngine : NSObject, URLSessionDelegate, SocketEnginePoll
     ///
     /// - parameter data: The data to parse.
     public func parseEngineData(_ data: Data) {
-        DefaultSocketLogger.Logger.log("Got binary data: %@", type: "SocketEngine", args: data)
+        DefaultSocketLogger.Logger.log("Got binary data: %@", type: logType, args: data)
 
         client?.parseEngineBinaryData(data.subdata(in: 1..<data.endIndex))
     }
@@ -526,7 +526,7 @@ public final class SocketEngine : NSObject, URLSessionDelegate, SocketEnginePoll
             return handleBase64(message: message)
         }
 
-        guard let type = SocketEnginePacketType(rawValue: Int(reader.currentCharacter) ?? -1) else {
+        guard let type = SocketEnginePacketTypeLegacy(rawValue: Int(reader.currentCharacter) ?? -1) else {
             checkAndHandleEngineError(message)
 
             return
@@ -606,7 +606,7 @@ public final class SocketEngine : NSObject, URLSessionDelegate, SocketEnginePoll
     /// - parameter msg: The message to send.
     /// - parameter withType: The type of this message.
     /// - parameter withData: Any data that this message has.
-    public func write(_ msg: String, withType type: SocketEnginePacketType, withData data: [Data]) {
+    public func write(_ msg: String, withType type: SocketEnginePacketTypeLegacy, withData data: [Data]) {
         engineQueue.async {
             guard self.connected else { return }
 
@@ -627,7 +627,7 @@ public final class SocketEngine : NSObject, URLSessionDelegate, SocketEnginePoll
     // MARK: Starscream delegate conformance
 
     /// Delegate method for connection.
-    public func websocketDidConnect(socket: WebSocket) {
+    public func websocketDidConnect(socket: WebSocketLegacy) {
         if !forceWebsockets {
             probing = true
             probeWebSocket()
@@ -639,7 +639,7 @@ public final class SocketEngine : NSObject, URLSessionDelegate, SocketEnginePoll
     }
 
     /// Delegate method for disconnection.
-    public func websocketDidDisconnect(socket: WebSocket, error: NSError?) {
+    public func websocketDidDisconnect(socket: WebSocketLegacy, error: NSError?) {
         probing = false
 
         if closed {
@@ -663,12 +663,12 @@ public final class SocketEngine : NSObject, URLSessionDelegate, SocketEnginePoll
     }
 }
 
-extension SocketEngine {
+extension SocketEngineLegacy {
     // MARK: URLSessionDelegate methods
 
     /// Delegate called when the session becomes invalid.
     public func URLSession(session: URLSession, didBecomeInvalidWithError error: NSError?) {
-        DefaultSocketLogger.Logger.error("Engine URLSession became invalid", type: "SocketEngine")
+        DefaultSocketLogger.Logger.error("Engine URLSession became invalid", type: logType)
 
         didError(reason: "Engine URLSession became invalid")
     }

@@ -57,7 +57,7 @@ extension SocketParsable where Self: SocketIOClientSpec {
         case .error:
             handleEvent("error", data: pack.data, isInternalMessage: true, withAck: pack.id)
         default:
-            DefaultSocketLogger.Logger.log("Got invalid packet: %@", type: "SocketParser", args: pack.description)
+            DefaultSocketLogger.Logger.log("Got invalid packet: %@", type: "[Legacy]SocketParser", args: pack.description)
         }
     }
     
@@ -135,20 +135,20 @@ extension SocketParsable where Self: SocketIOClientSpec {
     func parseSocketMessage(_ message: String) {
         guard !message.isEmpty else { return }
         
-        DefaultSocketLogger.Logger.log("Parsing %@", type: "SocketParser", args: message)
+        DefaultSocketLogger.Logger.log("Parsing %@", type: "[Legacy]SocketParser", args: message)
         
         switch parseString(message) {
         case let .left(err):
-            DefaultSocketLogger.Logger.error("\(err): %@", type: "SocketParser", args: message)
+            DefaultSocketLogger.Logger.error("\(err): %@", type: "[Legacy]SocketParser", args: message)
         case let .right(pack):
-            DefaultSocketLogger.Logger.log("Decoded packet as: %@", type: "SocketParser", args: pack.description)
+            DefaultSocketLogger.Logger.log("Decoded packet as: %@", type: "[Legacy]SocketParser", args: pack.description)
             handlePacket(pack)
         }
     }
     
     func parseBinaryData(_ data: Data) {
         guard !waitingPackets.isEmpty else {
-            DefaultSocketLogger.Logger.error("Got data when not remaking packet", type: "SocketParser")
+            DefaultSocketLogger.Logger.error("Got data when not remaking packet", type: "[Legacy]SocketParser")
             return
         }
         

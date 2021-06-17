@@ -32,7 +32,7 @@ struct SocketPacket {
     
     private let placeholders: Int
     
-    private static let logType = "SocketPacket"
+    private static let logType = "[Legacy]SocketPacket"
 
     let nsp: String
     let id: Int

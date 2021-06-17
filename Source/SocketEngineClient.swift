@@ -26,7 +26,7 @@
 import Foundation
 
 /// Declares that a type will be a delegate to an engine.
-@objc public protocol SocketEngineClient {
+@objc public protocol SocketEngineClientLegacy {
     // MARK: Methods
 
     /// Called when the engine errors.
