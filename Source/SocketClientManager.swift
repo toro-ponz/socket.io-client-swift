@@ -43,18 +43,18 @@ import Foundation
  manager["room1"]?.emit("hello")
  ```
  */
-open class SocketClientManagerLegacy : NSObject {
+open class SocketClientManager : NSObject {
     // MARK: Properties.
 
     /// The shared manager.
-    public static let sharedManager = SocketClientManagerLegacy()
+    public static let sharedManager = SocketClientManager()
 
-    private var sockets = [String: SocketIOClientLegacy]()
+    private var sockets = [String: SocketIOClient]()
 
     /// Gets a socket by its name.
     ///
     /// - returns: The socket, if one had the given name.
-    open subscript(string: String) -> SocketIOClientLegacy? {
+    open subscript(string: String) -> SocketIOClient? {
         get {
             return sockets[string]
         }
@@ -70,7 +70,7 @@ open class SocketClientManagerLegacy : NSObject {
     ///
     /// - parameter socket: The socket to add.
     /// - parameter labeledAs: The label for this socket.
-    open func addSocket(_ socket: SocketIOClientLegacy, labeledAs label: String) {
+    open func addSocket(_ socket: SocketIOClient, labeledAs label: String) {
         sockets[label] = socket
     }
 
@@ -79,7 +79,7 @@ open class SocketClientManagerLegacy : NSObject {
     /// - parameter withLabel: The label of the socket to remove.
     /// - returns: The socket for the given label, if one was present.
     @discardableResult
-    open func removeSocket(withLabel label: String) -> SocketIOClientLegacy? {
+    open func removeSocket(withLabel label: String) -> SocketIOClient? {
         return sockets.removeValue(forKey: label)
     }
 
@@ -88,8 +88,8 @@ open class SocketClientManagerLegacy : NSObject {
     /// - parameter socket: The socket to remove.
     /// - returns: The socket if it was in the manager.
     @discardableResult
-    open func removeSocket(_ socket: SocketIOClientLegacy) -> SocketIOClientLegacy? {
-        var returnSocket: SocketIOClientLegacy?
+    open func removeSocket(_ socket: SocketIOClient) -> SocketIOClient? {
+        var returnSocket: SocketIOClient?
 
         for (label, dictSocket) in sockets where dictSocket === socket {
             returnSocket = sockets.removeValue(forKey: label)

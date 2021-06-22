@@ -157,7 +157,7 @@ class SocketBasicPacketTest: XCTestCase {
     
     func testBinaryStringPlaceholderInMessage() {
         let engineString = "52-[\"test\",\"~~0\",{\"num\":0,\"_placeholder\":true},{\"_placeholder\":true,\"num\":1}]"
-        let socket = SocketIOClientLegacy(socketURL: URL(string: "http://localhost/")!)
+        let socket = SocketIOClient(socketURL: URL(string: "http://localhost/")!)
         socket.setTestable()
         
         if case let .right(packet) = socket.parseString(engineString) {

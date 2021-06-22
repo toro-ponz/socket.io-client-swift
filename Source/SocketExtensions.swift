@@ -46,7 +46,7 @@ extension CharacterSet {
 }
 
 extension NSDictionary {
-    private static func keyValueToSocketIOClientOption(key: String, value: Any) -> SocketIOClientOptionLegacy? {
+    private static func keyValueToSocketIOClientOption(key: String, value: Any) -> SocketIOClientOption? {
         switch (key, value) {
         case let ("connectParams", params as [String: Any]):
             return .connectParams(params)
@@ -66,7 +66,7 @@ extension NSDictionary {
             return .handleQueue(queue)
         case let ("log", log as Bool):
             return .log(log)
-        case let ("logger", logger as SocketLoggerLegacy):
+        case let ("logger", logger as SocketLogger):
             return .logger(logger)
         case let ("nsp", nsp as String):
             return .nsp(nsp)
@@ -93,8 +93,8 @@ extension NSDictionary {
         }
     }
     
-    func toSocketConfiguration() -> SocketIOClientConfigurationLegacy {
-        var options = [] as SocketIOClientConfigurationLegacy
+    func toSocketConfiguration() -> SocketIOClientConfiguration {
+        var options = [] as SocketIOClientConfiguration
         
         for (rawKey, value) in self {
             if let key = rawKey as? String, let opt = NSDictionary.keyValueToSocketIOClientOption(key: key, value: value) {

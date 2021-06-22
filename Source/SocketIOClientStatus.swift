@@ -25,7 +25,7 @@
 import Foundation
 
 /// Represents the state of the client.
-@objc public enum SocketIOClientStatusLegacy : Int {
+@objc public enum SocketIOClientStatus : Int {
     /// The client has never been connected. Or the client has been reset.
     case notConnected
 

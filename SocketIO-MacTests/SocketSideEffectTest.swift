@@ -145,7 +145,7 @@ class SocketSideEffectTest: XCTestCase {
     }
 
     func testSocketManager() {
-        let manager = SocketClientManagerLegacy.sharedManager
+        let manager = SocketClientManager.sharedManager
         manager["test"] = socket
 
         XCTAssert(manager["test"] === socket, "failed to get socket")
@@ -158,10 +158,10 @@ class SocketSideEffectTest: XCTestCase {
 
     func testChangingStatusCallsStatusChangeHandler() {
         let expect = expectation(description: "The client should announce when the status changes")
-        let statusChange = SocketIOClientStatusLegacy.connecting
+        let statusChange = SocketIOClientStatus.connecting
 
         socket.on("statusChange") {data, ack in
-            guard let status = data[0] as? SocketIOClientStatusLegacy else {
+            guard let status = data[0] as? SocketIOClientStatus else {
                 XCTFail("Status should be one of the defined statuses")
 
                 return
@@ -179,7 +179,7 @@ class SocketSideEffectTest: XCTestCase {
 
     func testOnClientEvent() {
         let expect = expectation(description: "The client should call client event handlers")
-        let event = SocketClientEventLegacy.disconnect
+        let event = SocketClientEvent.disconnect
         let closeReason = "testing"
 
         socket.on(clientEvent: event) {data, ack in
@@ -201,7 +201,7 @@ class SocketSideEffectTest: XCTestCase {
 
     func testClientEventsAreBackwardsCompatible() {
         let expect = expectation(description: "The client should call old style client event handlers")
-        let event = SocketClientEventLegacy.disconnect
+        let event = SocketClientEvent.disconnect
         let closeReason = "testing"
 
         socket.on("disconnect") {data, ack in
@@ -298,21 +298,21 @@ class SocketSideEffectTest: XCTestCase {
 
     let data = "test".data(using: String.Encoding.utf8)!
     let data2 = "test2".data(using: String.Encoding.utf8)!
-    private var socket: SocketIOClientLegacy!
+    private var socket: SocketIOClient!
 
     override func setUp() {
         super.setUp()
-        socket = SocketIOClientLegacy(socketURL: URL(string: "http://localhost/")!)
+        socket = SocketIOClient(socketURL: URL(string: "http://localhost/")!)
         socket.setTestable()
     }
 }
 
-struct ThrowingData : SocketDataLegacy {
+struct ThrowingData : SocketData {
     enum ThrowingError : Error {
         case error
     }
 
-    func socketRepresentation() throws -> SocketDataLegacy {
+    func socketRepresentation() throws -> SocketData {
         throw ThrowingError.error
     }
 
