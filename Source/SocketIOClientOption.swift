@@ -29,7 +29,7 @@ protocol ClientOption : CustomStringConvertible, Equatable {
 }
 
 /// The options for a client.
-public enum SocketIOClientOptionLegacy : ClientOption {
+public enum SocketIOClientOption : ClientOption {
     /// A dictionary of GET parameters that will be included in the connect url.
     case connectParams([String: Any])
 
@@ -61,7 +61,7 @@ public enum SocketIOClientOptionLegacy : ClientOption {
     case log(Bool)
 
     /// Used to pass in a custom logger.
-    case logger(SocketLoggerLegacy)
+    case logger(SocketLogger)
 
     /// The namespace that this client should connect to. Can be changed during use using the `joinNamespace`
     /// and `leaveNamespace` methods on `SocketIOClient`.
@@ -204,7 +204,7 @@ public enum SocketIOClientOptionLegacy : ClientOption {
     /// - parameter lhs: Left operand to compare.
     /// - parameter rhs: Right operand to compare.
     /// - returns: `true` if the two are the same option.
-    public static func ==(lhs: SocketIOClientOptionLegacy, rhs: SocketIOClientOptionLegacy) -> Bool {
+    public static func ==(lhs: SocketIOClientOption, rhs: SocketIOClientOption) -> Bool {
         return lhs.description == rhs.description
     }
 

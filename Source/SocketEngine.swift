@@ -27,7 +27,7 @@ import Foundation
 
 /// The class that handles the engine.io protocol and transports.
 /// See `SocketEnginePollable` and `SocketEngineWebsocket` for transport specific methods.
-public final class SocketEngineLegacy : NSObject, URLSessionDelegate, SocketEnginePollableLegacy, SocketEngineWebsocketLegacy {
+public final class SocketEngine : NSObject, URLSessionDelegate, SocketEnginePollable, SocketEngineWebsocket {
     // MARK: Properties
 
     /// The queue that all engine actions take place on.
@@ -112,10 +112,10 @@ public final class SocketEngineLegacy : NSObject, URLSessionDelegate, SocketEngi
     public private(set) var websocket = false
 
     /// The WebSocket for this engine.
-    public private(set) var ws: WebSocketLegacy?
+    public private(set) var ws: WebSocket?
 
     /// The client for this engine.
-    public weak var client: SocketEngineClientLegacy?
+    public weak var client: SocketEngineClient?
 
     private weak var sessionDelegate: URLSessionDelegate?
 
@@ -144,7 +144,7 @@ public final class SocketEngineLegacy : NSObject, URLSessionDelegate, SocketEngi
     /// - parameter client: The client for this engine.
     /// - parameter url: The url for this engine.
     /// - parameter config: An array of configuration options for this engine.
-    public init(client: SocketEngineClientLegacy, url: URL, config: SocketIOClientConfigurationLegacy) {
+    public init(client: SocketEngineClient, url: URL, config: SocketIOClientConfiguration) {
         self.client = client
         self.url = url
         for option in config {
@@ -194,7 +194,7 @@ public final class SocketEngineLegacy : NSObject, URLSessionDelegate, SocketEngi
     /// - parameter client: The client for this engine.
     /// - parameter url: The url for this engine.
     /// - parameter options: The options for this engine.
-    public convenience init(client: SocketEngineClientLegacy, url: URL, options: NSDictionary?) {
+    public convenience init(client: SocketEngineClient, url: URL, options: NSDictionary?) {
         self.init(client: client, url: url, config: options?.toSocketConfiguration() ?? [])
     }
 
@@ -321,7 +321,7 @@ public final class SocketEngineLegacy : NSObject, URLSessionDelegate, SocketEngi
 
     private func createWebsocketAndConnect() {
         ws?.delegate = nil
-        ws = WebSocketLegacy(url: urlWebSocketWithSid as URL)
+        ws = WebSocket(url: urlWebSocketWithSid as URL)
 
         var cookiesToAdd: [HTTPCookie] = cookies ?? []
         if let additionalCookies = session?.configuration.httpCookieStorage?.cookies(for: url) {
@@ -386,7 +386,7 @@ public final class SocketEngineLegacy : NSObject, URLSessionDelegate, SocketEngi
     // We need to take special care when we're polling that we send it ASAP
     // Also make sure we're on the emitQueue since we're touching postWait
     private func disconnectPolling(reason: String) {
-        postWait.append(String(SocketEnginePacketTypeLegacy.close.rawValue))
+        postWait.append(String(SocketEnginePacketType.close.rawValue))
 
         doRequest(for: createRequestForPostWithPostWait()) {_, _, _ in }
         closeOutEngine(reason: reason)
@@ -526,7 +526,7 @@ public final class SocketEngineLegacy : NSObject, URLSessionDelegate, SocketEngi
             return handleBase64(message: message)
         }
 
-        guard let type = SocketEnginePacketTypeLegacy(rawValue: Int(reader.currentCharacter) ?? -1) else {
+        guard let type = SocketEnginePacketType(rawValue: Int(reader.currentCharacter) ?? -1) else {
             checkAndHandleEngineError(message)
 
             return
@@ -606,7 +606,7 @@ public final class SocketEngineLegacy : NSObject, URLSessionDelegate, SocketEngi
     /// - parameter msg: The message to send.
     /// - parameter withType: The type of this message.
     /// - parameter withData: Any data that this message has.
-    public func write(_ msg: String, withType type: SocketEnginePacketTypeLegacy, withData data: [Data]) {
+    public func write(_ msg: String, withType type: SocketEnginePacketType, withData data: [Data]) {
         engineQueue.async {
             guard self.connected else { return }
 
@@ -627,7 +627,7 @@ public final class SocketEngineLegacy : NSObject, URLSessionDelegate, SocketEngi
     // MARK: Starscream delegate conformance
 
     /// Delegate method for connection.
-    public func websocketDidConnect(socket: WebSocketLegacy) {
+    public func websocketDidConnect(socket: WebSocket) {
         if !forceWebsockets {
             probing = true
             probeWebSocket()
@@ -639,7 +639,7 @@ public final class SocketEngineLegacy : NSObject, URLSessionDelegate, SocketEngi
     }
 
     /// Delegate method for disconnection.
-    public func websocketDidDisconnect(socket: WebSocketLegacy, error: NSError?) {
+    public func websocketDidDisconnect(socket: WebSocket, error: NSError?) {
         probing = false
 
         if closed {
@@ -663,7 +663,7 @@ public final class SocketEngineLegacy : NSObject, URLSessionDelegate, SocketEngi
     }
 }
 
-extension SocketEngineLegacy {
+extension SocketEngine {
     // MARK: URLSessionDelegate methods
 
     /// Delegate called when the session becomes invalid.

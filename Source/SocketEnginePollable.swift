@@ -25,7 +25,7 @@
 import Foundation
 
 /// Protocol that is used to implement socket.io polling support
-public protocol SocketEnginePollableLegacy : SocketEngineSpecLegacy {
+public protocol SocketEnginePollable : SocketEngineSpec {
     /// MARK: Properties
 
     /// `true` If engine's session has been invalidated.
@@ -63,14 +63,14 @@ public protocol SocketEnginePollableLegacy : SocketEngineSpecLegacy {
     /// - parameter message: The message to send.
     /// - parameter withType: The type of message to send.
     /// - parameter withData: The data associated with this message.
-    func sendPollMessage(_ message: String, withType type: SocketEnginePacketTypeLegacy, withData datas: [Data])
+    func sendPollMessage(_ message: String, withType type: SocketEnginePacketType, withData datas: [Data])
 
     /// Call to stop polling and invalidate the URLSession.
     func stopPolling()
 }
 
 // Default polling methods
-extension SocketEnginePollableLegacy {
+extension SocketEnginePollable {
     private func addHeaders(for req: URLRequest) -> URLRequest {
         var req = req
 
@@ -230,7 +230,7 @@ extension SocketEnginePollableLegacy {
     /// - parameter message: The message to send.
     /// - parameter withType: The type of message to send.
     /// - parameter withData: The data associated with this message.
-    public func sendPollMessage(_ message: String, withType type: SocketEnginePacketTypeLegacy, withData datas: [Data]) {
+    public func sendPollMessage(_ message: String, withType type: SocketEnginePacketType, withData datas: [Data]) {
         DefaultSocketLogger.Logger.log("Sending poll: %@ as type: %@", type: "[Legacy]SocketEnginePolling", args: message, type.rawValue)
         let fixedMessage: String
 

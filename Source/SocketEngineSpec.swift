@@ -26,9 +26,9 @@
 import Foundation
 
 /// Specifies a SocketEngine.
-@objc public protocol SocketEngineSpecLegacy {
+@objc public protocol SocketEngineSpec {
     /// The client for this engine.
-    weak var client: SocketEngineClientLegacy? { get set }
+    weak var client: SocketEngineClient? { get set }
 
     /// `true` if this engine is closed.
     var closed: Bool { get }
@@ -83,14 +83,14 @@ import Foundation
     var websocket: Bool { get }
 
     /// The WebSocket for this engine.
-    var ws: WebSocketLegacy? { get }
+    var ws: WebSocket? { get }
 
     /// Creates a new engine.
     ///
     /// - parameter client: The client for this engine.
     /// - parameter url: The url for this engine.
     /// - parameter options: The options for this engine.
-    init(client: SocketEngineClientLegacy, url: URL, options: NSDictionary?)
+    init(client: SocketEngineClient, url: URL, options: NSDictionary?)
 
     /// Starts the connection to the server.
     func connect()
@@ -132,10 +132,10 @@ import Foundation
     /// - parameter msg: The message to send.
     /// - parameter withType: The type of this message.
     /// - parameter withData: Any data that this message has.
-    func write(_ msg: String, withType type: SocketEnginePacketTypeLegacy, withData data: [Data])
+    func write(_ msg: String, withType type: SocketEnginePacketType, withData data: [Data])
 }
 
-extension SocketEngineSpecLegacy {
+extension SocketEngineSpec {
     var urlPollingWithSid: URL {
         var com = URLComponents(url: urlPolling, resolvingAgainstBaseURL: false)!
         com.percentEncodedQuery = com.percentEncodedQuery! + "&sid=\(sid.urlEncode()!)"

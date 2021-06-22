@@ -26,14 +26,14 @@ import Dispatch
 import Foundation
 
 /// The status of an ack.
-public enum SocketAckStatusLegacy : String {
+public enum SocketAckStatus : String {
     /// The ack timed out.
     case noAck = "NO ACK"
 }
 
-private struct SocketAckLegacy : Hashable {
+private struct SocketAck : Hashable {
     let ack: Int
-    var callback: AckCallbackLegacy!
+    var callback: AckCallback!
     var hashValue: Int {
         return ack.hashValue
     }
@@ -42,33 +42,33 @@ private struct SocketAckLegacy : Hashable {
         self.ack = ack
     }
 
-    init(ack: Int, callback: @escaping AckCallbackLegacy) {
+    init(ack: Int, callback: @escaping AckCallback) {
         self.ack = ack
         self.callback = callback
     }
 
-    fileprivate static func <(lhs: SocketAckLegacy, rhs: SocketAckLegacy) -> Bool {
+    fileprivate static func <(lhs: SocketAck, rhs: SocketAck) -> Bool {
         return lhs.ack < rhs.ack
     }
 
-    fileprivate static func ==(lhs: SocketAckLegacy, rhs: SocketAckLegacy) -> Bool {
+    fileprivate static func ==(lhs: SocketAck, rhs: SocketAck) -> Bool {
         return lhs.ack == rhs.ack
     }
 }
 
-struct SocketAckManagerLegacy {
-    private var acks = Set<SocketAckLegacy>(minimumCapacity: 1)
+struct SocketAckManager {
+    private var acks = Set<SocketAck>(minimumCapacity: 1)
     private let ackSemaphore = DispatchSemaphore(value: 1)
 
-    mutating func addAck(_ ack: Int, callback: @escaping AckCallbackLegacy) {
-        acks.insert(SocketAckLegacy(ack: ack, callback: callback))
+    mutating func addAck(_ ack: Int, callback: @escaping AckCallback) {
+        acks.insert(SocketAck(ack: ack, callback: callback))
     }
 
     /// Should be called on handle queue
     mutating func executeAck(_ ack: Int, with items: [Any], onQueue: DispatchQueue) {
         ackSemaphore.wait()
         defer { ackSemaphore.signal() }
-        let ack = acks.remove(SocketAckLegacy(ack: ack))
+        let ack = acks.remove(SocketAck(ack: ack))
 
         onQueue.async() { ack?.callback(items) }
     }
@@ -77,10 +77,10 @@ struct SocketAckManagerLegacy {
     mutating func timeoutAck(_ ack: Int, onQueue: DispatchQueue) {
         ackSemaphore.wait()
         defer { ackSemaphore.signal() }
-        let ack = acks.remove(SocketAckLegacy(ack: ack))
+        let ack = acks.remove(SocketAck(ack: ack))
 
         onQueue.async() {
-            ack?.callback?([SocketAckStatusLegacy.noAck.rawValue])
+            ack?.callback?([SocketAckStatus.noAck.rawValue])
         }
     }
 }
