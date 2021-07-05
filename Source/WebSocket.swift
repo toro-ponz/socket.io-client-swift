@@ -350,7 +350,15 @@ open class WebSocket : NSObject, StreamDelegate {
             inStream.setProperty(StreamNetworkServiceTypeValue.voIP as AnyObject, forKey: Stream.PropertyKey.networkServiceType)
             outStream.setProperty(StreamNetworkServiceTypeValue.voIP as AnyObject, forKey: Stream.PropertyKey.networkServiceType)
         }
-        
+
+        let socksConfig = CFDictionaryCreateMutableCopy(nil, 0, CFNetworkCopySystemProxySettings()!.takeRetainedValue()) as! [String: Any]
+        let propertyKey = CFStreamPropertyKey(rawValue: kCFStreamPropertySOCKSProxy)
+        let ip = socksConfig["HTTPSProxy"]
+        let proxySocksConfig = ["SOCKSProxy": ip, "SOCKSPort": 8889, "SOCKSEnable": true] as CFDictionary // Where 8889 is the SOCKS proxy port in Charles
+
+        CFWriteStreamSetProperty(outStream, propertyKey, proxySocksConfig)
+        CFReadStreamSetProperty(inStream, propertyKey, proxySocksConfig)
+
         CFReadStreamSetDispatchQueue(inStream, WebSocket.sharedWorkQueue)
         CFWriteStreamSetDispatchQueue(outStream, WebSocket.sharedWorkQueue)
         inStream.open()
